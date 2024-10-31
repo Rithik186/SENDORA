@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "844599229027",
+    "project_id": "sendora-9e14f",
+    "storage_bucket": "sendora-9e14f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844599229027:android:b35e25cf8c6853df0dd656",
+        "android_client_info": {
+          "package_name": "com.example.sendora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844599229027-7pd111v0db12rulu7dramv8luuabfm9m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sendora",
+            "certificate_hash": "4532c57a319979c4c0249f490d12bcc6f762f5bf"
+          }
+        },
+        {
+          "client_id": "844599229027-mdc06t32oglbv49ea4gajeqigpdm0asf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMlzPZ811HLbFrV-6toffm1rR9iVoRmp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844599229027-mdc06t32oglbv49ea4gajeqigpdm0asf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "844599229027-0lc42j43s0lk0trq3039251su11sjgjf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterApplication1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
