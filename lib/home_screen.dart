@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sendora/file_compression_screen.dart';
 import 'profile_screen.dart';
 import 'sign_in_screen.dart';
 import 'send_file_screen.dart';
 import 'receive_file_screen.dart';
+import 'send_online_file_screen.dart';
+import 'file_conversion.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -101,7 +103,22 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }),
             _buildFeatureCard('Convert Files', Icons.transform, Colors.orangeAccent, () {
-              // Add conversion functionality here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FileConversionPage()),
+              );
+            }),
+            _buildFeatureCard('Send Files Online', Icons.cloud_upload, Colors.purpleAccent, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SendOnlineFileScreen()), // New navigation to send online files
+              );
+            }),
+            _buildFeatureCard('Compress Files', Icons.compress, const Color.fromARGB(255, 255, 61, 8), () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FileCompressionScreen()),
+              );
             }),
           ],
         ),

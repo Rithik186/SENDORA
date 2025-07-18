@@ -1,16 +1,54 @@
-# flutter_application_1
+# Sendora
 
-A new Flutter project.
+Sendora is a cross-platform Flutter application for secure and efficient file sharing, conversion, and compression. It leverages Firebase for authentication and storage, and supports online file transfers.
+
+## Features
+
+- **Send Files Online:** Upload files to the cloud and share download links.
+- **File Conversion:** Convert images (JPG/PNG) and text to PDF, and between image formats.
+- **File Compression:** Compress images and PDFs to save space.
+- **User Authentication:** Sign up, sign in, and manage your profile with Firebase Auth and Google Sign-In.
+
+## Screenshots
+<!-- Add screenshots of your app here if available -->
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
+- [Flutter SDK](https://flutter.dev/docs/get-started/install)
+- [Firebase CLI](https://firebase.google.com/docs/cli) and a Firebase project
+- Platform-specific setup for [Android](https://firebase.google.com/docs/flutter/setup?platform=android) and [iOS](https://firebase.google.com/docs/flutter/setup?platform=ios)
 
-A few resources to get you started if this is your first Flutter project:
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/sendora.git
+   cd sendora
+   ```
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Configure Firebase:
+   - Add your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) to the respective directories.
+   - Update `firebase_options.dart` if needed.
+4. Run the app:
+   ```bash
+   flutter run
+   ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Project Structure
+- `lib/` - Main application code
+- `android/`, `ios/`, `web/`, `linux/`, `macos/`, `windows/` - Platform-specific code
+- `assets/` - Images and other assets
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contributing
+Contributions are welcome! Please open issues and submit pull requests for new features, bug fixes, or improvements.
+
+## License
+[MIT](LICENSE) (or specify your license here)
+
+## Acknowledgements
+- [Flutter](https://flutter.dev/)
+- [Firebase](https://firebase.google.com/)
+- [Other libraries used](pubspec.yaml)

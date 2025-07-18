@@ -31,43 +31,67 @@ dependencies:
   flutter:
     sdk: flutter
   file_picker: ^8.1.2
+  intl: ^0.19.0
   firebase_core: ^3.6.0 # Change to a compatible version
   firebase_auth: ^5.3.1 # Change to a compatible version
   cloud_firestore: ^5.4.4 # Change to a compatible version
   firebase_storage: ^12.3.4 # Change to a compatible version
   google_sign_in: ^6.2.1
   logger: ^2.4.0
+  dart_jwt_token: ^0.0.3
+  share_plus: ^10.1.1
   nearby_connections: ^4.1.1
   image_picker: ^1.1.2  # Add the image_picker package (check for the latest version) 
   udp: ^5.0.3
   qr_flutter: ^4.1.0
+  path: ^1.9.0
+  excel: ^4.0.6
+  image: ^4.3.0
+  url_launcher: ^6.3.1
+  pdf: ^3.11.1
+  cross_file: ^0.3.4+2
+  csv: ^6.0.0
   wifi_iot: ^0.3.19+1
   barcode_scan2: ^4.3.3
+  ai_barcode_scanner: ^6.0.1
+  flutter_riverpod: ^2.6.1
+  socket_io_client: ^3.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   permission_handler: ^11.3.1
   location: ^7.0.1
   path_provider: ^2.1.5
-  connectivity_plus: ^6.1.0
-  flutter_barcode_scanner: ^2.0.0
   barcode_widget: ^2.0.4
+  dio: ^5.7.0
+  dio_smart_retry: ^7.0.1
+  http_parser: ^4.1.0
+  build_runner: ^2.4.13
+  auto_route_generator: ^9.0.0
+  connectivity_plus: ^6.1.0
+  json_serializable: ^6.9.0
+  open_file: ^3.0.2
+  fluttertoast: ^8.2.10
+  
+dependency_overrides:
+  collection: ^1.19.0
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+
 flutter:
   assets:
     - assets/google.png

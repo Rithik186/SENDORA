@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.sendora"
-    compileSdk = 35
+    compileSdk = 34
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -22,14 +22,13 @@ android {
     defaultConfig {
         applicationId = "com.example.sendora"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
 
     buildTypes {
         release {
-            // Add your own signing config for the release build if needed.
             signingConfig = signingConfigs.debug
         }
     }

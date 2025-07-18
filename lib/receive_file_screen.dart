@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:udp/udp.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:wifi_iot/wifi_iot.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter/services.dart';
 
 class ReceiveFileScreen extends StatefulWidget {
   const ReceiveFileScreen({super.key});
@@ -13,103 +10,53 @@ class ReceiveFileScreen extends StatefulWidget {
 }
 
 class ReceiveFileScreenState extends State<ReceiveFileScreen> {
-  UDP? receiver;
-  final int port = 65001;
-  String statusMessage = "Waiting for files...";
-  String? scannedSSID;
-  String? scannedPassword;
+  static const platform = MethodChannel('com.example.sendora/wifi_direct');
+  String ssid = '';
+  String password = '';
+  String qrData = '';
+  String connectionStatus = 'Not Connected'; // Track connection status
 
   @override
   void initState() {
     super.initState();
-    initReceiver();
+    generateQRCode(); // Generate QR code when the screen loads
   }
 
-  Future<void> initReceiver() async {
-    receiver = await UDP.bind(Endpoint.any(port: Port(port)));
-    setState(() {
-      statusMessage = "Receiver initialized on port: $port";
-    });
-    listenForFiles();
-  }
-
-  Future<void> listenForFiles() async {
-    if (receiver != null) {
-      receiver!.socket?.listen((event) {
-        if (event == RawSocketEvent.read) {
-          receiver!.socket!.receive()?.then((datagram) {
-            if (datagram != null) {
-              final fileData = datagram.data;
-              String fileName = 'received_file_${DateTime.now().millisecondsSinceEpoch}.dat';
-              _saveFile(fileData, fileName);
-            }
-          });
-        }
-      });
-    }
-  }
-
-  Future<void> _saveFile(List<int> fileData, String fileName) async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String filePath = '${appDocDir.path}/$fileName';
-    File file = File(filePath);
+  // Method to generate the QR code with dynamic network details
+  Future<void> generateQRCode() async {
     try {
-      await file.writeAsBytes(fileData);
-      setState(() {
-        statusMessage = "File received and saved as $fileName";
-      });
-    } catch (e) {
-      setState(() {
-        statusMessage = "Error saving file: $e";
-      });
-    }
-  }
-
-  Future<void> scanQRCode() async {
-    String qrResult = await FlutterBarcodeScanner.scanBarcode(
-      "#ff6666", "Cancel", false, ScanMode.QR);
-    
-    if (qrResult != "-1") {
-      var regex = RegExp(r'S:(.*?);T:WPA;P:(.*?);');
-      var match = regex.firstMatch(qrResult);
-      if (match != null) {
+      final result = await platform.invokeMethod<Map>('generateNetworkDetails');
+      if (result != null) {
         setState(() {
-          scannedSSID = match.group(1);
-          scannedPassword = match.group(2);
-          statusMessage = "Scanned SSID: $scannedSSID, Password: $scannedPassword";
-        });
-        await connectToWiFi(scannedSSID!, scannedPassword!);
-      } else {
-        setState(() {
-          statusMessage = "Invalid QR code.";
+          ssid = result['ssid'];
+          password = result['password'];
+          qrData = "SSID:$ssid;PASSWORD:$password";
         });
       }
+    } on PlatformException catch (e) {
+      debugPrint("Failed to generate network details: ${e.message}");
     }
   }
 
-  Future<void> connectToWiFi(String ssid, String password) async {
+  // Automatically connect to the sender when QR code is scanned
+  Future<void> connectToPeer() async {
     try {
-      bool isConnected = await WiFiForIoTPlugin.connect(ssid, password: password, security: NetworkSecurity.WPA);
-      if (isConnected) {
+      // Automatically connect to the peer after scanning the QR code
+      final result = await platform.invokeMethod('connectToPeer', {'ssid': ssid, 'password': password});
+      if (result == 'success') {
         setState(() {
-          statusMessage = "Connected to $ssid";
+          connectionStatus = 'Connected to $ssid';
         });
       } else {
         setState(() {
-          statusMessage = "Failed to connect to $ssid";
+          connectionStatus = 'Failed to connect';
         });
       }
     } catch (e) {
       setState(() {
-        statusMessage = "Error connecting to Wi-Fi: $e";
+        connectionStatus = 'Error: $e';
       });
     }
-  }
-
-  @override
-  void dispose() {
-    receiver?.close();
-    super.dispose();
   }
 
   @override
@@ -120,19 +67,22 @@ class ReceiveFileScreenState extends State<ReceiveFileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(statusMessage),
+            const Text('Scan this QR Code to connect:'),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: scanQRCode,
-              child: const Text('Scan QR Code'),
-            ),
+            if (qrData.isNotEmpty)
+              QrImageView(
+                data: qrData,
+                version: QrVersions.auto,
+                size: 200.0,
+              ),
+            const SizedBox(height: 20),
+            Text('SSID: $ssid'),
+            Text('Password: $password'),
+            const SizedBox(height: 20),
+            Text('Connection Status: $connectionStatus'), // Display connection status
           ],
         ),
       ),
     );
   }
-}
-
-extension on Datagram? {
-  void then(Null Function(dynamic datagram) param0) {}
 }

@@ -1,77 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:barcode_widget/barcode_widget.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
 
 class SendFileScreen extends StatefulWidget {
   const SendFileScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _SendFileScreenState createState() => _SendFileScreenState();
+  SendFileScreenState createState() => SendFileScreenState();
 }
 
-class _SendFileScreenState extends State<SendFileScreen> {
-  final Logger logger = Logger();
-  String hotspotDetails = '';
+class SendFileScreenState extends State<SendFileScreen> {
+  static const platform = MethodChannel('com.example.sendora/wifi_direct');
+  List<String> selectedFiles = [];
+  String transferStatus = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _createHotspot();
+  // Method to select files
+  Future<void> selectFiles() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (result != null) {
+      setState(() {
+        selectedFiles = result.paths.map((path) => path!).toList();
+      });
+    }
   }
 
-  Future<void> _createHotspot() async {
-    const platform = MethodChannel('com.example.sendora/wifi');
-
+  // Method to scan QR code and handle connection
+  Future<void> scanQRCode() async {
     try {
-      final String result = await platform.invokeMethod('startHotspot');
+      final result = await BarcodeScanner.scan();
       setState(() {
-        hotspotDetails = result; // result contains SSID, password, and IP
+        transferStatus = 'Scanned: ${result.rawContent}';
       });
-    } on PlatformException catch (e) {
-      logger.e("Failed to start hotspot: '${e.message}'.");
+
+      if (result.rawContent.startsWith("SSID:") && result.rawContent.contains("PASSWORD:")) {
+        final ssid = result.rawContent.split(';').first.split(':').last.trim();
+        final password = result.rawContent.split(';').last.split(':').last.trim();
+
+        await connectToPeer(ssid, password);
+      } else {
+        setState(() {
+          transferStatus = 'Invalid QR code scanned.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        transferStatus = 'Failed to scan QR code: $e';
+      });
+    }
+  }
+
+  // Method to connect to the peer via Wi-Fi Direct
+  Future<void> connectToPeer(String ssid, String password) async {
+    try {
+      await platform.invokeMethod('connectToPeer', {'ssid': ssid, 'password': password});
+      setState(() {
+        transferStatus = 'Connecting to $ssid...';
+      });
+    } catch (e) {
+      setState(() {
+        transferStatus = 'Failed to connect: $e';
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Send Files'),
-      ),
+      appBar: AppBar(title: const Text('Send File')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (hotspotDetails.isNotEmpty)
-              Column(
-                children: [
-                  Text(
-                    'Hotspot Details:',
-                    style: Theme.of(context).textTheme.titleMedium, // Use titleMedium instead of headline6
-                  ),
-                  const SizedBox(height: 10),
-                  BarcodeWidget(
-                    data: hotspotDetails, // SSID, password, and IP for QR code
-                    barcode: Barcode.qrCode(),
-                    width: 200,
-                    height: 200,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(hotspotDetails, textAlign: TextAlign.center),
-                ],
-              ),
-            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implement file selection and sending logic
-              },
-              child: const Text('Select Files to Send'),
+              onPressed: selectFiles,
+              child: const Text('Select File'),
             ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: selectedFiles.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(selectedFiles[index]),
+                  );
+                },
+              ),
+            ),
+            ElevatedButton(
+              onPressed: scanQRCode,
+              child: const Text('Scan QR Code'),
+            ),
+            Text(transferStatus),
           ],
         ),
       ),
