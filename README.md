@@ -22,7 +22,9 @@ Sendora is a cross-platform Flutter application for secure and efficient file sh
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/sendora.git
+   git clone https://github.com/muthu067/File_sharing_Application.git
+git branch -M main
+git push -u origin main
    cd sendora
    ```
 2. Install dependencies:
